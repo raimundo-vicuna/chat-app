@@ -1,5 +1,5 @@
 {
-  "name": "nexus-chat",
+  "name": "rai-chat",
   "version": "1.0.0",
   "description": "Chat en tiempo real con Socket.io",
   "main": "server.js",
