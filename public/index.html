@@ -386,7 +386,7 @@
     container.innerHTML = '';
     const msgs = localMessages[currentChannel] || [];
     if (!msgs.length) {
-      container.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;margin:auto;padding:40px 0">No hay mensajes aún. ¡Sé el primero!</div>';
+      container.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;margin:auto;padding:40px 0">No hay mensajes.</div>';
       return;
     }
     const dl = document.createElement('div');
