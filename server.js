@@ -1,67 +1,73 @@
 const express = require('express');
-const http = require('http');
+const http    = require('http');
 const { Server } = require('socket.io');
-const path = require('path');
+const path    = require('path');
 
-const app = express();
+const app    = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io     = new Server(server);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Historial en memoria (últimos 50 mensajes por canal)
-const history = { general: [], random: [], tech: [], ideas: [] };
-const MAX = 50;
-
-// Usuarios online: socketId -> { name, color, bg }
+const history    = { general: [] };
+const reactions  = {};           // msgId -> { emoji: [users] }
+const MAX        = 100;
 const onlineUsers = {};
 
 function broadcastOnline() {
-  const users = Object.values(onlineUsers);
-  io.emit('online-users', users);
+  io.emit('online-users', Object.values(onlineUsers));
 }
 
 io.on('connection', (socket) => {
-  console.log('Usuario conectado:', socket.id);
+  console.log('Conectado:', socket.id);
 
-  socket.emit('history', history);
-
-  socket.on('join', ({ channel, name, color, bg }) => {
-    if (typeof channel === 'object') {
-      ({ channel, name, color, bg } = channel);
-    }
-    socket.join(channel);
+  socket.on('join', ({ channel, name, color, bg } = {}) => {
+    if (typeof channel === 'string') socket.join(channel);
     if (name) {
       onlineUsers[socket.id] = { name, color, bg };
       broadcastOnline();
     }
+    const hist = {};
+    for (const ch in history) {
+      hist[ch] = history[ch].map(m => ({
+        ...m,
+        reactions: reactions[m.id] || {}
+      }));
+    }
+    socket.emit('history', hist);
   });
 
-  socket.on('message', ({ channel, sender, text, color, bg }) => {
+  socket.on('message', ({ channel, id, sender, text, color, bg, attachment }) => {
     const msg = {
-      sender, text, color, bg,
-      time: new Date().toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' }),
+      id: id || Date.now().toString(36),
+      sender, text, color, bg, attachment,
+      time: new Date().toLocaleTimeString('es', { hour:'2-digit', minute:'2-digit' }),
     };
     if (!history[channel]) history[channel] = [];
     history[channel].push(msg);
     if (history[channel].length > MAX) history[channel].shift();
-    io.to(channel).emit('message', { channel, ...msg });
+    io.to(channel).emit('message', { channel, ...msg, reactions: {} });
   });
 
-  socket.on('typing', ({ channel, name }) => {
-    socket.to(channel).emit('typing', { name });
+  
+  socket.on('reaction', ({ channel, msgId, emoji, user }) => {
+    if (!reactions[msgId]) reactions[msgId] = {};
+    if (!reactions[msgId][emoji]) reactions[msgId][emoji] = [];
+    const idx = reactions[msgId][emoji].indexOf(user);
+    if (idx === -1) reactions[msgId][emoji].push(user);
+    else            reactions[msgId][emoji].splice(idx, 1);
+    io.to(channel).emit('reaction', { channel, msgId, emoji, user });
   });
 
-  socket.on('stop-typing', ({ channel, name }) => {
-    socket.to(channel).emit('stop-typing', { name });
-  });
+  socket.on('typing',      ({ channel, name }) => socket.to(channel).emit('typing',      { name }));
+  socket.on('stop-typing', ({ channel, name }) => socket.to(channel).emit('stop-typing', { name }));
 
   socket.on('disconnect', () => {
-    console.log('Usuario desconectado:', socket.id);
+    console.log('Desconectado:', socket.id);
     delete onlineUsers[socket.id];
     broadcastOnline();
   });
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
+server.listen(PORT, () => console.log(`http://localhost:${PORT}`));
