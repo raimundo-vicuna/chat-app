@@ -9,7 +9,7 @@ const COLORS = [
   { color:'#38bdf8', bg:'rgba(56,189,248,0.12)'  },
   { color:'#f472b6', bg:'rgba(244,114,182,0.12)' },
 ];
-const REACTION_EMOJIS = ['ðŸ‘','â¤ï¸','ðŸ˜‚','ðŸ˜®','ðŸ˜¢','ðŸ”¥'];
+const REACTION_EMOJIS = ['\u{1F44D}','\u{2764}\u{FE0F}','\u{1F602}','\u{1F62E}','\u{1F622}','\u{1F525}'];
 const CHANNELS_INFO = { general:{ label:'# gabo chupalo', sub:'Canal principal' } };
 
 let myName='', myColor=COLORS[0].color, myBg=COLORS[0].bg;
@@ -57,7 +57,7 @@ function setAuthLoading(btnId, loading) {
     btn.innerHTML = '<div class="spinner"></div>';
   } else {
     btn.disabled = false;
-    btn.innerHTML = btnId==='login-btn' ? 'Entrar al chat â†’' : 'Crear cuenta â†’';
+    btn.innerHTML = btnId==='login-btn' ? 'Entrar al chat &rarr;' : 'Crear cuenta &rarr;';
   }
 }
 
@@ -73,13 +73,13 @@ async function doLogin() {
       body: JSON.stringify({ username, password })
     });
     const data = await res.json();
-    if (!res.ok) { showError(data.error || 'Error al iniciar sesiÃ³n'); return; }
+    if (!res.ok) { showError(data.error || 'Error al iniciar sesión'); return; }
     myName  = data.username;
     myColor = data.color;
     myBg    = data.bg;
     enterApp();
   } catch(e) {
-    showError('Error de conexiÃ³n');
+    showError('Error de conexión');
   } finally {
     setAuthLoading('login-btn', false);
   }
@@ -90,8 +90,8 @@ async function doRegister() {
   const password = document.getElementById('reg-pass').value;
   const pass2    = document.getElementById('reg-pass2').value;
   if (!username || !password || !pass2) { showError('Completa todos los campos'); return; }
-  if (password !== pass2) { showError('Las contraseÃ±as no coinciden'); return; }
-  if (password.length < 4) { showError('La contraseÃ±a debe tener al menos 4 caracteres'); return; }
+  if (password !== pass2) { showError('Las contraseñas no coinciden'); return; }
+  if (password.length < 4) { showError('La contraseña debe tener al menos 4 caracteres'); return; }
   hideError();
   setAuthLoading('reg-btn', true);
   try {
@@ -106,7 +106,7 @@ async function doRegister() {
     myBg    = data.bg;
     enterApp();
   } catch(e) {
-    showError('Error de conexiÃ³n');
+    showError('Error de conexión');
   } finally {
     setAuthLoading('reg-btn', false);
   }
@@ -184,14 +184,14 @@ function connectSocket() {
 
   socket.on('online-users', users => {
     onlineUsers = users;
-    document.getElementById('online-badge').textContent = `â— ${users.length} online`;
+    document.getElementById('online-badge').textContent = `• ${users.length} online`;
     const list = document.getElementById('online-list');
     list.innerHTML = '';
     users.forEach(u => {
       const div = document.createElement('div');
       div.className = 'user-item';
       const isMe = u.name===myName;
-      div.innerHTML = `<div class="avatar" style="background:${u.bg};color:${u.color}">${u.name[0].toUpperCase()}</div><span style="font-size:13px">${esc(u.name)}${isMe?' <span style="color:var(--muted);font-size:11px">(tÃº)</span>':''}</span><div class="dot"></div>`;
+      div.innerHTML = `<div class="avatar" style="background:${u.bg};color:${u.color}">${u.name[0].toUpperCase()}</div><span style="font-size:13px">${esc(u.name)}${isMe?' <span style="color:var(--muted);font-size:11px">(tú)</span>':''}</span><div class="dot"></div>`;
       div.onclick = () => { if (!isMe) insertMention(u.name); };
       list.appendChild(div);
     });
@@ -200,7 +200,7 @@ function connectSocket() {
 
 function setStatus(online) {
   const el = document.getElementById('conn-status');
-  el.textContent = online ? 'â— online' : 'â— offline';
+  el.textContent = online ? '• online' : '• offline';
   el.className   = online ? 'connected' : 'disconnected';
 }
 
@@ -300,8 +300,8 @@ function checkMention(msg) {
 
 function showBanner(sender, text) {
   const banner = document.getElementById('notif-banner');
-  const short  = text.length>55 ? text.slice(0,52)+'â€¦' : text;
-  document.getElementById('notif-text').innerHTML = `<span class="notif-name">${esc(sender)}</span> te mencionÃ³:<br><span style="color:var(--muted)">${esc(short)}</span>`;
+  const short  = text.length>55 ? text.slice(0,52)+'…' : text;
+  document.getElementById('notif-text').innerHTML = `<span class="notif-name">${esc(sender)}</span> te mencionó:<br><span style="color:var(--muted)">${esc(short)}</span>`;
   banner.style.display = 'flex';
   clearTimeout(banner._t);
   banner._t = setTimeout(() => { banner.style.display='none'; }, 4500);
@@ -315,7 +315,7 @@ function buildReactionPills(bar, reactions, msgId) {
     if (!users.length) continue;
     const pill = document.createElement('div');
     pill.className = 'reaction-pill'+(users.includes(myName)?' mine':'');
-    pill.title = users.slice(0,5).join(', ')+(users.length>5?` y ${users.length-5} mÃ¡s`:'');
+    pill.title = users.slice(0,5).join(', ')+(users.length>5?` y ${users.length-5} más`:'');
     pill.innerHTML = `${emoji} <span class="rcount">${users.length}</span>`;
     pill.onclick = () => emitReaction(msgId, emoji);
     bar.appendChild(pill);
@@ -361,7 +361,7 @@ document.addEventListener('keydown', e => {
 
 function handleFileSelect(e) {
   const file=e.target.files[0]; if(!file) return; e.target.value='';
-  if (file.size>10*1024*1024) { alert('MÃ¡ximo 10MB'); return; }
+  if (file.size>10*1024*1024) { alert('Máximo 10MB'); return; }
   pendingFile=file;
   const wrap=document.getElementById('upload-thumb-wrap');
   document.getElementById('upload-name').textContent=file.name;
@@ -383,7 +383,7 @@ async function uploadCloudinary(file) {
   });
 }
 function fmtBytes(b){ return b<1024?b+'B':b<1048576?(b/1024).toFixed(1)+'KB':(b/1048576).toFixed(1)+'MB'; }
-function fileIcon(name){ return ({xlsx:'ðŸ“Š',xls:'ðŸ“Š',csv:'ðŸ“Š',pdf:'ðŸ“„',doc:'ðŸ“',docx:'ðŸ“',zip:'ðŸ—œï¸',mp4:'ðŸŽ¬',mp3:'ðŸŽµ'})[name.split('.').pop().toLowerCase()]||'ðŸ“Ž'; }
+function fileIcon(name){ return ({xlsx:'\u{1F4CA}',xls:'\u{1F4CA}',csv:'\u{1F4CA}',pdf:'\u{1F4C4}',doc:'\u{1F4DD}',docx:'\u{1F4DD}',zip:'\u{1F5DC}\u{FE0F}',mp4:'\u{1F3AC}',mp3:'\u{1F3B5}'})[name.split('.').pop().toLowerCase()]||'\u{1F4CE}'; }
 
 async function sendMessage() {
   const input=document.getElementById('msg-input'), text=input.value.trim();
@@ -411,10 +411,10 @@ function stopTyping(){ if(isTyping&&socket){isTyping=false;socket.emit('stop-typ
 function renderTyping(){
   const row=document.getElementById('typing-row'), names=Object.keys(typingNames).filter(n=>n!==myName);
   if(!names.length){row.innerHTML='';return;}
-  row.innerHTML=`<span style="display:inline-flex;align-items:center;gap:6px">${names.length===1?names[0]:names.join(' y ')} ${names.length===1?'estÃ¡ escribiendo':'estÃ¡n escribiendo'} <span class="typing-dots"><span></span><span></span><span></span></span></span>`;
+  row.innerHTML=`<span style="display:inline-flex;align-items:center;gap:6px">${names.length===1?names[0]:names.join(' y ')} ${names.length===1?'está escribiendo':'están escribiendo'} <span class="typing-dots"><span></span><span></span><span></span></span></span>`;
 }
 
-function insertEmoji(){ const e=['ðŸ˜„','ðŸš€','ðŸ’¡','ðŸ”¥','âœ¨','ðŸ‘€','ðŸŽ¯','ðŸ¤”','ðŸ˜Ž','ðŸ‘‹'],input=document.getElementById('msg-input'); input.value+=e[Math.floor(Math.random()*e.length)]; input.focus(); }
+function insertEmoji(){ const e=['\u{1F604}','\u{1F680}','\u{1F4A1}','\u{1F525}','\u{2728}','\u{1F440}','\u{1F3AF}','\u{1F914}','\u{1F60E}','\u{1F44B}'],input=document.getElementById('msg-input'); input.value+=e[Math.floor(Math.random()*e.length)]; input.focus(); }
 function openLightbox(url){ document.getElementById('lightbox-img').src=url; document.getElementById('lightbox').style.display='flex'; }
 function closeLightbox(){ document.getElementById('lightbox').style.display='none'; }
 function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }

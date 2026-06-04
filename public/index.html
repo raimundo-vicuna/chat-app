@@ -13,10 +13,10 @@
 <div id="auth-screen">
   <div class="auth-box">
     <div class="auth-logo">rai<span>/chat</span></div>
-    <div class="auth-subtitle">Tu espacio para hablar</div>
+    <div class="auth-subtitle">chupala meando</div>
 
     <div class="auth-tabs">
-      <button class="auth-tab active" onclick="showTab('login')">Iniciar sesiÃ³n</button>
+      <button class="auth-tab active" onclick="showTab('login')">Iniciar sesion</button>
       <button class="auth-tab" onclick="showTab('register')">Crear cuenta</button>
     </div>
     <div class="auth-error" id="auth-error"></div>
@@ -26,11 +26,11 @@
         <input class="auth-input" id="login-user" type="text" placeholder="Tu nombre de usuario" maxlength="30" autocomplete="username" />
       </div>
       <div class="auth-field">
-        <label class="auth-label">ContraseÃ±a</label>
-        <input class="auth-input" id="login-pass" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password" />
+        <label class="auth-label">Contraseña</label>
+        <input class="auth-input" id="login-pass" type="password" placeholder="contraseña" autocomplete="current-password" />
       </div>
       <button class="auth-btn" id="login-btn" onclick="doLogin()">
-        Entrar al chat â†’
+        Entrar al chat
       </button>
     </div>
     <div class="auth-panel" id="panel-register">
@@ -39,19 +39,19 @@
         <input class="auth-input" id="reg-user" type="text" placeholder="Entre 2 y 30 caracteres" maxlength="30" autocomplete="username" />
       </div>
       <div class="auth-field">
-        <label class="auth-label">ContraseÃ±a</label>
-        <input class="auth-input" id="reg-pass" type="password" placeholder="MÃ­nimo 4 caracteres" autocomplete="new-password" />
+        <label class="auth-label">Contraseña</label>
+        <input class="auth-input" id="reg-pass" type="password" placeholder="Mínimo 4 caracteres" autocomplete="new-password" />
       </div>
       <div class="auth-field">
-        <label class="auth-label">Confirmar contraseÃ±a</label>
-        <input class="auth-input" id="reg-pass2" type="password" placeholder="Repite la contraseÃ±a" autocomplete="new-password" />
+        <label class="auth-label">Confirmar contraseña</label>
+        <input class="auth-input" id="reg-pass2" type="password" placeholder="Repite la contraseña" autocomplete="new-password" />
       </div>
       <div class="auth-field">
         <label class="auth-label">Color</label>
         <div class="auth-colors" id="reg-colors"></div>
       </div>
       <button class="auth-btn" id="reg-btn" onclick="doRegister()">
-        Crear cuenta â†’
+        Crear cuenta
       </button>
     </div>
   </div>
@@ -61,22 +61,22 @@
     <div class="sidebar">
       <div class="sidebar-header">
         <div class="logo">rai<span>/chat</span></div>
-        <div id="online-badge">â— 0 online</div>
+        <div id="online-badge">0 online</div>
       </div>
       <div class="section-label">Canales</div>
       <div class="channel-list">
         <div class="channel active" onclick="switchChannel('general')"># gabo chupalo <span class="badge" id="badge-general"></span></div>
       </div>
-      <div class="section-label">En lÃ­nea</div>
+      <div class="section-label">En linea</div>
       <div class="online-list" id="online-list"></div>
       <div class="identity-bar">
         <div class="avatar" id="my-avatar-bar"></div>
         <div>
           <div class="my-name" id="my-name-bar"></div>
-          <div class="my-sub">tÃº</div>
+          <div class="my-sub">tú</div>
         </div>
-        <div id="conn-status" class="disconnected">â— offline</div>
-        <button class="logout-btn" onclick="doLogout()" title="Cerrar sesiÃ³n"><i class="ti ti-logout"></i></button>
+        <div id="conn-status" class="disconnected">• offline</div>
+        <button class="logout-btn" onclick="doLogout()" title="Cerrar sesión"><i class="ti ti-logout"></i></button>
       </div>
     </div>
 
@@ -96,7 +96,7 @@
             <div class="upload-name" id="upload-name"></div>
             <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
           </div>
-          <button class="upload-cancel" onclick="cancelUpload()">Ã—</button>
+          <button class="upload-cancel" onclick="cancelUpload()">&times;</button>
         </div>
         <div class="input-row">
           <div style="display:flex;gap:4px;margin-right:4px">
@@ -104,7 +104,7 @@
             <button class="action-btn" onclick="document.getElementById('file-input').click()" title="Adjuntar"><i class="ti ti-paperclip"></i></button>
           </div>
           <input class="msg-input" id="msg-input"
-            placeholder="Escribeâ€¦ usa @ para mencionar"
+            placeholder="Escribe&hellip; usa @ para mencionar"
             onkeydown="handleKey(event)"
             oninput="handleTyping();handleMentionInput()"
             autocomplete="off" />
@@ -118,7 +118,7 @@
 <input type="file" id="file-input" accept="image/*,.xlsx,.xls,.csv,.pdf,.doc,.docx" onchange="handleFileSelect(event)" />
 <div id="mention-popup"></div>
 <div id="notif-banner">
-  <span style="font-size:18px">ðŸ””</span>
+  <span style="font-size:18px">&#128276;</span>
   <div id="notif-text" style="font-size:13px;line-height:1.4"></div>
 </div>
 <div id="lightbox" onclick="closeLightbox()"><img id="lightbox-img" src="" alt="imagen" /></div>
@@ -126,5 +126,4 @@
 <script src="/js/app.js"></script>
 </body>
 </html>
-
 

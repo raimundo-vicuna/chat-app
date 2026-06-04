@@ -54,14 +54,14 @@ async function initDB() {
       PRIMARY KEY (msg_id, emoji, username)
     );
   `);
-  console.log('âœ… Base de datos lista');
+  console.log('Base de datos lista');
 }
 
 app.post('/api/register', async (req, res) => {
   const { username, password, color, bg } = req.body;
   if (!username || !password) return res.status(400).json({ error: 'Faltan datos' });
   if (username.length < 2 || username.length > 30) return res.status(400).json({ error: 'El nombre debe tener entre 2 y 30 caracteres' });
-  if (password.length < 4) return res.status(400).json({ error: 'La contraseÃ±a debe tener al menos 4 caracteres' });
+  if (password.length < 4) return res.status(400).json({ error: 'La contraseña debe tener al menos 4 caracteres' });
 
   try {
     const hash = await bcrypt.hash(password, 10);
@@ -83,11 +83,11 @@ app.post('/api/login', async (req, res) => {
 
   try {
     const result = await pool.query('SELECT * FROM users WHERE username = $1', [username.trim()]);
-    if (!result.rows.length) return res.status(401).json({ error: 'Usuario o contraseÃ±a incorrectos' });
+    if (!result.rows.length) return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
 
     const user = result.rows[0];
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ error: 'Usuario o contraseÃ±a incorrectos' });
+    if (!match) return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
 
     res.json({ ok: true, username: user.username, color: user.color, bg: user.bg });
   } catch (err) {
@@ -171,7 +171,7 @@ io.on('connection', (socket) => {
         await pool.query('INSERT INTO reactions (msg_id, emoji, username) VALUES ($1,$2,$3)', [msgId, emoji, user]);
       }
     } catch (err) {
-      console.error('Error en reacciÃ³n:', err);
+      console.error('Error en reacción:', err);
     }
     io.to(channel).emit('reaction', { channel, msgId, emoji, user });
   });
