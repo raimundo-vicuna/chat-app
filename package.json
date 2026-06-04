@@ -1,5 +1,5 @@
 {
-  "name": "rai-chat",
+  "name": "nexus-chat",
   "version": "1.0.0",
   "description": "Chat en tiempo real con Socket.io",
   "main": "server.js",
@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "express": "^4.18.2",
-    "socket.io": "^4.7.2"
+    "socket.io": "^4.7.2",
+    "bcryptjs": "^2.4.3",
+    "pg": "^8.11.3"
   }
 }
