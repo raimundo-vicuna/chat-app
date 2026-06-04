@@ -17,11 +17,16 @@ app.use(express.static(path.join(__dirname, 'public')));
    Para desarrollo local crea un archivo .env con:
    DATABASE_URL=postgresql://usuario:password@localhost:5432/chat
 */
+if (!process.env.DATABASE_URL) {
+  console.error('Falta DATABASE_URL. En Railway agrega PostgreSQL y conecta esa variable al servicio web.');
+  process.exit(1);
+}
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL && process.env.DATABASE_URL.includes('railway')
+  ssl: process.env.DATABASE_URL.includes('railway')
     ? { rejectUnauthorized: false }
-    : false,
+    : undefined,
 });
 
 /* ── Crear tablas si no existen ── */
