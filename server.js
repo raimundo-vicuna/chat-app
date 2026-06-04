@@ -1,4 +1,4 @@
-const express  = require('express');
+﻿const express  = require('express');
 const http     = require('http');
 const { Server } = require('socket.io');
 const path     = require('path');
@@ -12,11 +12,6 @@ const io     = new Server(server);
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-/* ── PostgreSQL ──
-   Railway inyecta DATABASE_URL automáticamente.
-   Para desarrollo local crea un archivo .env con:
-   DATABASE_URL=postgresql://usuario:password@localhost:5432/chat
-*/
 if (!process.env.DATABASE_URL) {
   console.error('Falta DATABASE_URL. En Railway agrega PostgreSQL y conecta esa variable al servicio web.');
   process.exit(1);
@@ -29,7 +24,6 @@ const pool = new Pool({
     : undefined,
 });
 
-/* ── Crear tablas si no existen ── */
 async function initDB() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
@@ -60,19 +54,14 @@ async function initDB() {
       PRIMARY KEY (msg_id, emoji, username)
     );
   `);
-  console.log('✅ Base de datos lista');
+  console.log('âœ… Base de datos lista');
 }
 
-/* ══════════════════════════════════════
-   REST API — Autenticación
-══════════════════════════════════════ */
-
-/* Registro */
 app.post('/api/register', async (req, res) => {
   const { username, password, color, bg } = req.body;
   if (!username || !password) return res.status(400).json({ error: 'Faltan datos' });
   if (username.length < 2 || username.length > 30) return res.status(400).json({ error: 'El nombre debe tener entre 2 y 30 caracteres' });
-  if (password.length < 4) return res.status(400).json({ error: 'La contraseña debe tener al menos 4 caracteres' });
+  if (password.length < 4) return res.status(400).json({ error: 'La contraseÃ±a debe tener al menos 4 caracteres' });
 
   try {
     const hash = await bcrypt.hash(password, 10);
@@ -88,18 +77,17 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-/* Login */
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ error: 'Faltan datos' });
 
   try {
     const result = await pool.query('SELECT * FROM users WHERE username = $1', [username.trim()]);
-    if (!result.rows.length) return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+    if (!result.rows.length) return res.status(401).json({ error: 'Usuario o contraseÃ±a incorrectos' });
 
     const user = result.rows[0];
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+    if (!match) return res.status(401).json({ error: 'Usuario o contraseÃ±a incorrectos' });
 
     res.json({ ok: true, username: user.username, color: user.color, bg: user.bg });
   } catch (err) {
@@ -108,13 +96,9 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-/* ══════════════════════════════════════
-   SOCKET.IO — Chat en tiempo real
-══════════════════════════════════════ */
 const onlineUsers = {};
 const MAX = 100;
 
-/* Cargar historial de un canal desde DB */
 async function getHistory(channel) {
   const msgs = await pool.query(
     `SELECT m.*, 
@@ -177,7 +161,6 @@ io.on('connection', (socket) => {
 
   socket.on('reaction', async ({ channel, msgId, emoji, user }) => {
     try {
-      // Toggle: si existe lo borra, si no existe lo inserta
       const exists = await pool.query(
         'SELECT 1 FROM reactions WHERE msg_id=$1 AND emoji=$2 AND username=$3',
         [msgId, emoji, user]
@@ -188,7 +171,7 @@ io.on('connection', (socket) => {
         await pool.query('INSERT INTO reactions (msg_id, emoji, username) VALUES ($1,$2,$3)', [msgId, emoji, user]);
       }
     } catch (err) {
-      console.error('Error en reacción:', err);
+      console.error('Error en reacciÃ³n:', err);
     }
     io.to(channel).emit('reaction', { channel, msgId, emoji, user });
   });
@@ -203,8 +186,8 @@ io.on('connection', (socket) => {
   });
 });
 
-/* ── Arrancar ── */
 const PORT = process.env.PORT || 3000;
 initDB()
   .then(() => server.listen(PORT, () => console.log(`http://localhost:${PORT}`)))
   .catch(err => { console.error('Error iniciando DB:', err); process.exit(1); });
+
